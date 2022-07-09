@@ -1,0 +1,27 @@
+---
+- hosts: all
+  tasks:
+  - shell: 'echo Installing packages...'
+  - name: 'Add Repo php7.4'
+    apt_repository:
+      repo: 'ppa:ondrej/php'
+    become: yes
+  - name: 'Update Repo'
+    apt:
+      update_cache: yes
+    become: yes
+  - name: 'Install php7.4'
+    apt:
+      name: php7.4
+      state: latest
+    become: yes
+  - name: 'Install apache2'
+    apt:
+      name: apache2
+      state: latest
+    become: yes
+  - name: 'Install libapache2-mod-php7.4'
+    apt:
+      name: libapache2-mod-php7.4
+      state: latest
+    become: yes

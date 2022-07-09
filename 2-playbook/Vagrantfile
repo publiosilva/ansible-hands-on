@@ -14,12 +14,18 @@ Vagrant.configure("2") do |config|
               chown vagrant:vagrant /home/vagrant/private_key"
 
     ansible.vm.provision  "shell",
-      inline: "cp /vagrant/hosts /home/vagrant"
+      inline: "cp /vagrant/hosts /home/vagrant && \
+              chmod a-x /home/vagrant/hosts"
 
     ansible.vm.provision  "shell",
-      inline: "apt update && \
-              apt install -y software-properties-common && \
+      inline: "cp /vagrant/provisioning.yml /home/vagrant"
+
+    ansible.vm.provision  "shell",
+      inline: "apt-get update && \
+              apt-get upgrade && \
+              apt-get install -y software-properties-common && \
               add-apt-repository --yes --update ppa:ansible/ansible && \
+              apt-get update
               apt install -y ansible"
   end
 end
