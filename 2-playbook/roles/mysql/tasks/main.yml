@@ -1,0 +1,31 @@
+---
+- name: 'Install packages'
+  apt: 
+    name: [mysql-server, python-mysqldb]
+    state: latest
+  become: yes
+- name: 'Create MySQL database'
+  mysql_db:
+    name: '{{ wp_db_name }}'
+    login_user: root
+    state: present
+  become: yes
+- name: 'Create MySQL user'
+  mysql_user:
+    login_user: root
+    name: '{{ wp_db_username }}'
+    password: '{{ wp_db_password }}'
+    priv: '{{ wp_db_name }}.*:ALL'
+    state: present
+    host: '{{ item }}'
+  become: yes
+  with_items:
+    - '{{ ansible_machine_ip }}'
+    - '{{ wp_host_ip }}'
+- name: 'Configure MySQL to accept remote connections'
+  copy:
+    src: 'files/mysqld.cnf'
+    dest: '/etc/mysql/mysql.conf.d/mysqld.cnf'
+  become: yes
+  notify:
+    - restart mysql
